@@ -1,8 +1,9 @@
 import pyodbc
-from row import Row
+from row import MealIngredientsRow
 from table import Table
 
-class Connection: 
+
+class Connection:
 
     def __init__(self) -> None:
         self.connection = pyodbc.connect('''Driver={ODBC Driver 17 for SQL server};
@@ -11,23 +12,17 @@ class Connection:
                 Trusted_Connection=yes;''')
         self.cursor = self.connection.cursor()
 
-    def query(self, query: str): 
-       return self.cursor.execute(query)
+    def query(self, query: str):
+        return self.cursor.execute(query)
 
-    def insert(self,sql: str): 
+    def insert(self, sql: str):
         self.cursor.execute(sql)
         self.cursor.commit()
 
-
-    def query_as_dict(self, query: str) -> list[dict]: 
+    def query_as_dict(self, query: str) -> list[dict]:
         self.cursor.execute(query)
         columns = [column[0] for column in self.cursor.description]
         results = []
-        for row in self.cursor.fetchall():
-            results.append(dict(zip(columns, row)))
-        return results 
-
-
-
-
-
+        for table_row in self.cursor.fetchall():
+            results.append(dict(zip(columns, table_row)))
+        return results

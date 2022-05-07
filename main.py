@@ -1,27 +1,27 @@
-from data_augmentation import DataAugmentator
-from row import Row
+from data_augmentation import MealIngredientDataAugmentator
+from row import MealIngredientsRow, IngredientRow, Row
 from table import Table
 from connection import Connection
-import random
 
 if __name__ == "__main__":
-    #Generacion de la tabla
     connection = Connection();
+
+    # Ingredientes
+    data = connection.query_as_dict("SELECT id, name FROM ingredients")
+    ingredients: Table = Table([IngredientRow(**data) for data in data])
+
+    # Generacion de la tabla meal_ingredients
     data = connection.query_as_dict("SELECT id, meal_id, ingredient_id, quantity FROM meal_ingredients")
-    rows: list[Row] = [Row(**data) for data in data]
-    table = Table(rows)
+    table: Table = Table([MealIngredientsRow(**data) for data in data])
 
-    #Instanciacion del aumentador de datos
-    data_augmentator: DataAugmentator = DataAugmentator(table, 10)
+    # Instanciacion del aumentador de datos
+    data_augmentator: MealIngredientDataAugmentator = MealIngredientDataAugmentator(connection,table, 10, ingredients)
 
-
-    #Mix randomico del orden de las filas
+    # Mix randomico del orden de las filas
     data_augmentator.print_table()
     print("RANDOM MIX")
     data_augmentator.random_mix()
 
     data_augmentator.split_into_blocks()
 
-    data_augmentator.insert_random_values()
-
-
+    data_augmentator.insert_random_rows()
