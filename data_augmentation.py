@@ -58,7 +58,7 @@ class MealIngredientDataAugmentator(DataAugmentator):
     def __create_random_row(self, row, start, stop):
         new_row: MealIngredientsRow = MealIngredientsRow(**row.serialize());
 
-        new_row.ingredient_id = random.randrange(1, 100)
+        new_row.ingredient_id = random.randrange(1, 101)
 
         while self.__ingredient_created(new_row.ingredient_id) and len(self.ingredients.rows) < 100:
             new_row.ingredient_id = random.randrange(1, 101)
@@ -68,6 +68,7 @@ class MealIngredientDataAugmentator(DataAugmentator):
         if not self.__ingredient_created(new_row.ingredient_id):
             self.__insert_new_ingredient(new_row.ingredient_id)
 
+        self.connection.insert(f"INSERT INTO meal_ingredients(meal_id, ingredient_id, quantity) values ({new_row.meal_id},{new_row.ingredient_id},{new_row.value});")
         return new_row
 
     def __insert_new_ingredient(self, ingredient_id: int):
