@@ -12,3 +12,9 @@ class Table:
 
     def len(self) -> int:
         return len(self.rows)
+
+    def is_created(self, id) -> bool:
+        if id in [row.id for row in self.rows]:
+            return True
+        return False
+
